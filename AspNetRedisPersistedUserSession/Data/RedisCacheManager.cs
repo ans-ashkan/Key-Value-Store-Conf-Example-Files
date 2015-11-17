@@ -28,7 +28,7 @@ namespace AspNetRedisPersistedUserSession.Data
                 KeepAlive = 1
             });
             newtonsoftSerializer = new NewtonsoftSerializer();
-            _cacheClient = new StackExchangeRedisCacheClient(_redis, new ProtobufSerializer() );
+            _cacheClient = new StackExchangeRedisCacheClient(_redis, newtonsoftSerializer);
             
         }
 

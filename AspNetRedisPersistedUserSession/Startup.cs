@@ -41,6 +41,7 @@ namespace AspNetRedisPersistedUserSession
                 CookieName = "LoginCookie",
                 //                Provider = new MyCookieAuthenticationProvider(),
                 SessionStore = new DictionarySessionStore()
+//                SessionStore = new RedisSessionStore()
             });
 
             /* using (var dbc = new AppDbContext())
