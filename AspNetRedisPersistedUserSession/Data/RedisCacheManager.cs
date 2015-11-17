@@ -2,7 +2,6 @@
 using StackExchange.Redis;
 using StackExchange.Redis.Extensions.Core;
 using StackExchange.Redis.Extensions.Newtonsoft;
-using StackExchange.Redis.Extensions.Protobuf;
 
 namespace AspNetRedisPersistedUserSession.Data
 {
