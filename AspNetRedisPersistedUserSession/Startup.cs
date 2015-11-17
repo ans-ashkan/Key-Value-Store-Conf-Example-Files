@@ -13,6 +13,8 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using Microsoft.Owin.Security;
 using Microsoft.Owin.Security.Cookies;
+using Microsoft.Owin.Security.DataHandler;
+using Microsoft.Owin.Security.DataHandler.Serializer;
 using Owin;
 
 [assembly: OwinStartup(typeof(AspNetRedisPersistedUserSession.Startup))]
@@ -36,6 +38,8 @@ namespace AspNetRedisPersistedUserSession
                 CookieHttpOnly = true,
                 ExpireTimeSpan = TimeSpan.FromHours(3),
                 SlidingExpiration = true,
+                CookieName = "LoginCookie",
+                //                Provider = new MyCookieAuthenticationProvider(),
                 SessionStore = new DictionarySessionStore()
             });
 
@@ -50,23 +54,28 @@ namespace AspNetRedisPersistedUserSession
             AntiForgeryConfig.UniqueClaimTypeIdentifier = ClaimTypes.NameIdentifier;
         }
 
+
+
         public class RedisSessionStore : IAuthenticationSessionStore
         {
+            TicketSerializer _ticketSerializer = new TicketSerializer();
+
+
             public async Task<string> StoreAsync(AuthenticationTicket ticket)
             {
                 var key = Guid.NewGuid().ToString();
-                await RedisCacheManager.Instance.SetAsync(key, ticket);
+                await RedisCacheManager.Instance.SetAsync(key, _ticketSerializer.Serialize(ticket));
                 return key;
             }
 
             public async Task RenewAsync(string key, AuthenticationTicket ticket)
             {
-                await RedisCacheManager.Instance.SetAsync(key, ticket);
+                await RedisCacheManager.Instance.SetAsync(key, _ticketSerializer.Serialize(ticket));
             }
 
             public async Task<AuthenticationTicket> RetrieveAsync(string key)
             {
-                return await RedisCacheManager.Instance.GetAsync<AuthenticationTicket>(key);
+                return _ticketSerializer.Deserialize(await RedisCacheManager.Instance.GetAsync<byte[]>(key));
             }
 
             public async Task RemoveAsync(string key)

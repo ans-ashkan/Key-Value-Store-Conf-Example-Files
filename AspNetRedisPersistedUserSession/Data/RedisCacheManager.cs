@@ -2,6 +2,7 @@
 using StackExchange.Redis;
 using StackExchange.Redis.Extensions.Core;
 using StackExchange.Redis.Extensions.Newtonsoft;
+using StackExchange.Redis.Extensions.Protobuf;
 
 namespace AspNetRedisPersistedUserSession.Data
 {
@@ -27,7 +28,8 @@ namespace AspNetRedisPersistedUserSession.Data
                 KeepAlive = 1
             });
             newtonsoftSerializer = new NewtonsoftSerializer();
-            _cacheClient = new StackExchangeRedisCacheClient(_redis, newtonsoftSerializer);
+            _cacheClient = new StackExchangeRedisCacheClient(_redis, new ProtobufSerializer() );
+            
         }
 
         public static RedisCacheManager Instance
